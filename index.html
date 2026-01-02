@@ -4,8 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projection</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div id="model-selector">
+        <button onclick="onModelSelect('rocketship.obj')" data-model="rocketship.obj" class="active">rocketship</button>
+        <button onclick="onModelSelect('space-shuttle.obj')" data-model="space-shuttle.obj">space shuttle</button>
+        <button onclick="onModelSelect('ufo.obj')" data-model="ufo.obj">ufo</button>
+    </div>
+    <label class="checkbox-control">
+        <input type="checkbox" id="show-bounding-box" checked onchange="showBoundingBox = this.checked">
+        <span class="checkmark"></span>
+        Show bounding box
+    </label>
+
     <canvas id="scene"></canvas>
     <script src="model-loader.js"></script>
     <script src="index.js"></script>

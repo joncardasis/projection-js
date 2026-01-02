@@ -1,4 +1,3 @@
-const MODEL_SRC = 'ufo.obj'
 const BACKGROUND = "#111111"
 const FOREGROUND = "#4AF626"
 
@@ -6,8 +5,12 @@ scene.width = 600
 scene.height = 600
 const ctx = scene.getContext("2d")
 
-let vertices = []
-let edges = []
+let model = {
+  vertices: [],
+  edges: [],
+  boundingBox: null,
+}
+let showBoundingBox = true
 
 function clear() {
   ctx.fillStyle = BACKGROUND
@@ -65,8 +68,9 @@ function translate({x, y, z}, delta = {x: 0, y: 0, z: 0}) {
 
 const FPS = 60
 
-let camera_position = {x: 0, y: 0, z: 2}
+const camera_position = {x: 0, y: 0, z: 1}
 let angle = 0
+let timer = undefined
 
 function setCameraPosition(x, y, z) {
   camera_position = {x, y, z}
@@ -77,33 +81,70 @@ function frame() {
   angle += (deltaTime * Math.PI / 2)
   angle %= Math.PI * 2 // wrap around
 
-  clear()
-  for (const vertex of vertices) {
-    point(project3DTo2D(translate(rotate_xz(vertex, angle), camera_position)))
+  function animatedProjection(vertex) {
+    // Apply animations to 3d coordinate and project to html canvas coordinate space
+    return project3DTo2D(translate(rotate_xz(vertex, angle), camera_position))
   }
 
-  for (const edge of edges) {
-    const p1 = project3DTo2D(translate(rotate_xz(vertices[edge[0]], angle), camera_position))
-    const p2 = project3DTo2D(translate(rotate_xz(vertices[edge[1]], angle), camera_position))
-    
+  clear()
+  for (const edge of model.edges) {
+    const p1 = animatedProjection(model.vertices[edge[0]])
+    const p2 = animatedProjection(model.vertices[edge[1]])
+
     line({p1, p2})
   }
-
-  for (const vertex of vertices) {
-    point(project3DTo2D(translate(rotate_xz(vertex, angle), camera_position)))
+  for (const vertex of model.vertices) {
+    point(animatedProjection(vertex))
+  }
+  if (showBoundingBox && model.boundingBox) {
+    const { minX, maxX, minY, maxY, minZ, maxZ } = model.boundingBox
+    const corners = [
+      {x: minX, y: maxY, z: minZ}, // front-top-left
+      {x: maxX, y: maxY, z: minZ}, // front-top-right
+      {x: maxX, y: minY, z: minZ}, // front-bottom-right
+      {x: minX, y: minY, z: minZ}, // front-bottom-left
+      {x: minX, y: maxY, z: maxZ}, // back-top-left
+      {x: maxX, y: maxY, z: maxZ}, // back-top-right
+      {x: maxX, y: minY, z: maxZ}, // back-bottom-right
+      {x: minX, y: minY, z: maxZ}, // back-bottom-left
+    ]
+    const boxEdges = [
+      [0,1], [1,2], [2,3], [3,0], // front face
+      [4,5], [5,6], [6,7], [7,4], // back face
+      [0,4], [1,5], [2,6], [3,7], // connecting edges
+    ]
+    for (const [i, j] of boxEdges) {
+      const p1 = animatedProjection(corners[i])
+      const p2 = animatedProjection(corners[j])
+      line({p1, p2}, 1, '#FF6B6B')
+    }
   }
 
-  return setTimeout(frame, 1000/FPS)
+  timer = setTimeout(frame, 1000/FPS)
 }
 
-async function main() {
-  const model = await loadModel(MODEL_SRC)
-  vertices = model.vertices
-  edges = model.edges
-  console.log(`Loaded model ${MODEL_SRC}: ${vertices.length} vertices, ${edges.length} edges`)
+async function onModelSelect(modelSrc) {  
+  // Update button styles
+  const buttons = document.querySelectorAll('#model-selector button')
+  buttons.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.model === modelSrc)
+  })
   
-  // Start animation
-  setTimeout(frame, 1000/FPS)
+  clearTimeout(timer)
+  model = await loadModel(modelSrc)
+  console.log(`Loaded model ${modelSrc}: ${model.vertices.length} vertices, ${model.edges.length} edges`)
+
+  // Update camera to be able to view entire model
+  const maxExtent = Math.max(
+    Math.abs(model.boundingBox.maxX), Math.abs(model.boundingBox.minX),
+    Math.abs(model.boundingBox.maxY), Math.abs(model.boundingBox.minY),
+    Math.abs(model.boundingBox.maxZ), Math.abs(model.boundingBox.minZ)
+  )
+  camera_position.z = maxExtent + 2
+  
+  // Start animation render loop
+  timer = setTimeout(frame, 1000/FPS)
 }
 
-main()
+// Load default model
+onModelSelect(document.querySelector('#model-selector button.active').dataset.model)
