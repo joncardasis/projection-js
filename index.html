@@ -8,15 +8,21 @@
 </head>
 <body>
     <div id="model-selector">
-        <button onclick="onModelSelect('rocketship.obj')" data-model="rocketship.obj" class="active">rocketship</button>
-        <button onclick="onModelSelect('space-shuttle.obj')" data-model="space-shuttle.obj">space shuttle</button>
         <button onclick="onModelSelect('ufo.obj')" data-model="ufo.obj">ufo</button>
+        <button onclick="onModelSelect('space-shuttle.obj')" data-model="space-shuttle.obj">space shuttle</button>
+        <button onclick="onModelSelect('rocketship.obj')" data-model="rocketship.obj" class="active">rocketship</button>
     </div>
-    <label class="checkbox-control">
-        <input type="checkbox" id="show-bounding-box" checked onchange="showBoundingBox = this.checked">
-        <span class="checkmark"></span>
-        Show bounding box
-    </label>
+    <div id="controls-bar">
+        <label class="checkbox-control">
+            <input type="checkbox" id="show-bounding-box" checked onchange="showBoundingBox = this.checked">
+            <span class="checkmark"></span>
+            Show bounding box
+        </label>
+        <div id="model-stats">
+            <span>vertices: <span id="vertex-count">0</span></span>
+            <span>edges: <span id="edge-count">0</span></span>
+        </div>
+    </div>
 
     <canvas id="scene"></canvas>
     <script src="model-loader.js"></script>

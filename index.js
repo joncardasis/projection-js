@@ -133,6 +133,10 @@ async function onModelSelect(modelSrc) {
   clearTimeout(timer)
   model = await loadModel(modelSrc)
   console.log(`Loaded model ${modelSrc}: ${model.vertices.length} vertices, ${model.edges.length} edges`)
+  
+  // Update stats display
+  document.getElementById('vertex-count').textContent = model.vertices.length.toLocaleString()
+  document.getElementById('edge-count').textContent = model.edges.length.toLocaleString()
 
   // Update camera to be able to view entire model
   const maxExtent = Math.max(
