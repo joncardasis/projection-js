@@ -41,7 +41,7 @@ function project3DTo2D({x, y, z}) {
   // convert to screen space: [-1, 1] to [0, scene.width] and [0, scene.height]
   return {
     x: (projected.x+1) / 2 * scene.width,
-    y: (projected.y+1) / 2 * scene.height,
+    y: (1 - (projected.y+1) / 2)* scene.height,
   }
 }
 
@@ -55,18 +55,22 @@ function rotate_xz({x, y, z}, angle) {
   }
 }
 
-function translate_z({x, y, z}, dz) {
+function translate({x, y, z}, delta = {x: 0, y: 0, z: 0}) {
   return {
-    x: x,
-    y: y,
-    z: z + dz,
+    x: x + delta.x,
+    y: y + delta.y,
+    z: z + delta.z,
   }
 }
 
 const FPS = 60
 
-const camera_distance = 2
+let camera_position = {x: 0, y: 0, z: 2}
 let angle = 0
+
+function setCameraPosition(x, y, z) {
+  camera_position = {x, y, z}
+}
 
 function frame() {
   const deltaTime = 1/FPS
@@ -75,27 +79,31 @@ function frame() {
 
   clear()
   for (const vertex of vertices) {
-    point(project3DTo2D(translate_z(rotate_xz(vertex, angle), camera_distance)))
+    point(project3DTo2D(translate(rotate_xz(vertex, angle), camera_position)))
   }
 
   for (const edge of edges) {
-    const p1 = project3DTo2D(translate_z(rotate_xz(vertices[edge[0]], angle), camera_distance))
-    const p2 = project3DTo2D(translate_z(rotate_xz(vertices[edge[1]], angle), camera_distance))
+    const p1 = project3DTo2D(translate(rotate_xz(vertices[edge[0]], angle), camera_position))
+    const p2 = project3DTo2D(translate(rotate_xz(vertices[edge[1]], angle), camera_position))
     
     line({p1, p2})
   }
 
   for (const vertex of vertices) {
-    point(project3DTo2D(translate_z(rotate_xz(vertex, angle), camera_distance)))
+    point(project3DTo2D(translate(rotate_xz(vertex, angle), camera_position)))
   }
 
   return setTimeout(frame, 1000/FPS)
 }
 
-// Load model and start animation
-loadModel(MODEL_SRC).then(model => {
+async function main() {
+  const model = await loadModel(MODEL_SRC)
   vertices = model.vertices
   edges = model.edges
   console.log(`Loaded model ${MODEL_SRC}: ${vertices.length} vertices, ${edges.length} edges`)
+  
+  // Start animation
   setTimeout(frame, 1000/FPS)
-})
+}
+
+main()
