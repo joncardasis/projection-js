@@ -42,8 +42,18 @@ function parseOBJ(objText) {
     const [v1, v2] = key.split(',').map(Number)
     return [v1, v2]
   })
+
+  // Find bounding box
+  const boundingBox = vertices.reduce((acc, v) => ({
+    minX: Math.min(acc.minX, v.x), maxX: Math.max(acc.maxX, v.x),
+    minY: Math.min(acc.minY, v.y), maxY: Math.max(acc.maxY, v.y),
+    minZ: Math.min(acc.minZ, v.z), maxZ: Math.max(acc.maxZ, v.z),
+  }), { 
+    minX: Infinity, maxX: -Infinity, 
+    minY: Infinity, maxY: -Infinity, 
+    minZ: Infinity, maxZ: -Infinity })
   
-  return { vertices, edges }
+  return { vertices, edges, boundingBox }
 }
 
 /**
