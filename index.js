@@ -1,3 +1,4 @@
+const MODEL_SRC = 'ufo.obj'
 const BACKGROUND = "#111111"
 const FOREGROUND = "#4AF626"
 
@@ -5,12 +6,15 @@ scene.width = 600
 scene.height = 600
 const ctx = scene.getContext("2d")
 
+let vertices = []
+let edges = []
+
 function clear() {
   ctx.fillStyle = BACKGROUND
   ctx.fillRect(0, 0, scene.width, scene.height)
 }
 
-function point({x, y, size = 10, color = FOREGROUND}) {
+function point({x, y, size = 4, color = FOREGROUND}) {
   ctx.fillStyle = color
   // draw with centered origin
   ctx.beginPath()
@@ -85,7 +89,13 @@ function frame() {
     point(project3DTo2D(translate_z(rotate_xz(vertex, angle), camera_distance)))
   }
 
-  setTimeout(frame, 1000/FPS)
+  return setTimeout(frame, 1000/FPS)
 }
 
-setTimeout(frame, 1000/FPS)
+// Load model and start animation
+loadModel(MODEL_SRC).then(model => {
+  vertices = model.vertices
+  edges = model.edges
+  console.log(`Loaded model ${MODEL_SRC}: ${vertices.length} vertices, ${edges.length} edges`)
+  setTimeout(frame, 1000/FPS)
+})
