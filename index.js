@@ -67,18 +67,30 @@ function translate({x, y, z}, delta = {x: 0, y: 0, z: 0}) {
   }
 }
 
-const FPS = 60
-
 const camera_position = {x: 0, y: 0, z: 1}
 let angle = 0
-let timer = undefined
+let animationId = null
+let lastTime = 0
+let lastFpsUpdate = 0
+let frameCount = 0
 
 function setCameraPosition(x, y, z) {
   camera_position = {x, y, z}
 }
 
-function frame() {
-  const deltaTime = 1/FPS
+function frame(timestamp) {
+  // Calculate delta time in seconds
+  const deltaTime = (timestamp - lastTime) / 1000
+  lastTime = timestamp
+
+  // Update FPS counter every second
+  frameCount++
+  if (timestamp - lastFpsUpdate >= 1000) {
+    document.getElementById('fps-count').textContent = frameCount
+    frameCount = 0
+    lastFpsUpdate = timestamp
+  }
+
   angle += (deltaTime * Math.PI / 2)
   angle %= Math.PI * 2 // wrap around
 
@@ -121,7 +133,7 @@ function frame() {
     }
   }
 
-  timer = setTimeout(frame, 1000/FPS)
+  animationId = requestAnimationFrame(frame)
 }
 
 async function onModelSelect(modelSrc) {  
@@ -136,7 +148,7 @@ async function onModelSelect(modelSrc) {
     }
   })
   
-  clearTimeout(timer)
+  cancelAnimationFrame(animationId)
   model = await loadModel(modelSrc)
   
   // Center model based on its bounding box
@@ -175,7 +187,8 @@ async function onModelSelect(modelSrc) {
   document.getElementById('edge-count').textContent = model.edges.length.toLocaleString()
   
   // Start animation render loop
-  timer = setTimeout(frame, 1000/FPS)
+  lastTime = performance.now()
+  animationId = requestAnimationFrame(frame)
 }
 
 // Load default model
