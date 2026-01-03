@@ -25,7 +25,7 @@ function point({x, y, size = 4, color = FOREGROUND}) {
   ctx.fill()
 }
 
-function line({p1, p2}, lineWidth = 2, color = FOREGROUND) {
+function line({p1, p2}, lineWidth = 1, color = FOREGROUND) {
   ctx.beginPath()
   ctx.strokeStyle = color
   ctx.lineWidth = lineWidth
@@ -132,19 +132,41 @@ async function onModelSelect(modelSrc) {
   
   clearTimeout(timer)
   model = await loadModel(modelSrc)
+  
+  // Center model based on its bounding box
+  const center = {
+    x: (model.boundingBox.minX + model.boundingBox.maxX) / 2,
+    y: (model.boundingBox.minY + model.boundingBox.maxY) / 2,
+    z: (model.boundingBox.minZ + model.boundingBox.maxZ) / 2,
+  }
+  model.vertices = model.vertices.map(v => ({
+    x: v.x - center.x,
+    y: v.y - center.y,
+    z: v.z - center.z,
+  }))
+  model.boundingBox = {
+    minX: model.boundingBox.minX - center.x,
+    maxX: model.boundingBox.maxX - center.x,
+    minY: model.boundingBox.minY - center.y,
+    maxY: model.boundingBox.maxY - center.y,
+    minZ: model.boundingBox.minZ - center.z,
+    maxZ: model.boundingBox.maxZ - center.z,
+  }
+
+  // Update camera to be able to view entire model. Calculate how far points swing in xz during rotation
+  const radiusXZ = Math.sqrt(
+    Math.max(model.boundingBox.maxX ** 2, model.boundingBox.minX ** 2) +
+    Math.max(model.boundingBox.maxZ ** 2, model.boundingBox.minZ ** 2)
+  )
+  // Position camera so model fills viewport even at closest rotation point
+  const maxExtentY = Math.max(Math.abs(model.boundingBox.maxY), Math.abs(model.boundingBox.minY))
+  camera_position.z = maxExtentY + radiusXZ
+   
   console.log(`Loaded model ${modelSrc}: ${model.vertices.length} vertices, ${model.edges.length} edges`)
   
   // Update stats display
   document.getElementById('vertex-count').textContent = model.vertices.length.toLocaleString()
   document.getElementById('edge-count').textContent = model.edges.length.toLocaleString()
-
-  // Update camera to be able to view entire model
-  const maxExtent = Math.max(
-    Math.abs(model.boundingBox.maxX), Math.abs(model.boundingBox.minX),
-    Math.abs(model.boundingBox.maxY), Math.abs(model.boundingBox.minY),
-    Math.abs(model.boundingBox.maxZ), Math.abs(model.boundingBox.minZ)
-  )
-  camera_position.z = maxExtent + 2
   
   // Start animation render loop
   timer = setTimeout(frame, 1000/FPS)
