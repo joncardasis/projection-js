@@ -117,17 +117,20 @@ body {
   display: block;
   margin-bottom: 20px;
   font-size: 11px;
+}
+
+a {
   text-decoration: none;
   color: inherit;
   opacity: 0.6;
   transition: opacity 0.15s;
 }
 
-#model-attribution span {
+a span {
   text-decoration: underline;
 }
 
-#model-attribution:hover {
+a:hover {
   opacity: 1;
 }
 

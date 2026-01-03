@@ -11,7 +11,7 @@
         <div class="info-title">// projection.js</div>
         <p>A minimal 3D wireframe renderer built from first principles using vanilla JavaScript and HTML Canvas 2D.</p>
         <br/>
-        <p>This project intentionally avoids WebGL, Three.js, and external dependencies as a learning exercise to expose the core mathematics behind 3D graphics—including coordinate systems, projection, transformations, and camera placement by implementing the entire rendering pipeline on a 2D canvas.</p>
+        <p>This project intentionally avoids WebGL, Three.js, and external dependencies as a learning exercise to expose the core mathematics behind 3D graphics including coordinate systems, projection, transformations, and camera placement by implementing a 3D rendering pipeline on a 2D canvas.</p>
         
         <div class="info-divider"></div>
         
@@ -21,14 +21,12 @@
             <li><strong>Rotation:</strong> 2x2 matrix transform in the xz-plane</li>
             <li><strong>Auto-fit camera:</strong> The camera is positioned to keep all model coordinates within the [-1,1] normalized device coordinate (NDC) space, accounting for the bounding sphere radius</li>
         </ul>
+        <br/>
+        <a href="https://github.com/joncardasis/projection-js" target="_blank"><span>View on GitHub</span></a>
     </div>
+    
+    <canvas id="scene"></canvas>
 
-    <div id="model-selector">
-        <button onclick="onModelSelect('ufo.obj')" data-model="ufo.obj" data-author="Poly by Google" data-source="https://poly.pizza/m/6pwiq7hSrHr">ufo</button>
-        <button onclick="onModelSelect('space-shuttle.obj')" data-model="space-shuttle.obj" data-author="Poly by Google" data-source="https://poly.pizza/m/djxolbz_CYC">space shuttle</button>
-        <button onclick="onModelSelect('rocketship.obj')" data-model="rocketship.obj" data-author="Gabriel Valdivia" data-source="https://poly.pizza/m/a5ChWS6uW0y" class="active">rocketship</button>
-    </div>
-    <a id="model-attribution" href="https://poly.pizza/m/a5ChWS6uW0y" target="_blank">Model by <span></span></a>
     <div id="controls-bar">
         <label class="checkbox-control">
             <input type="checkbox" id="show-bounding-box" checked onchange="showBoundingBox = this.checked">
@@ -41,8 +39,13 @@
             <span>fps: <span id="fps-count">0</span></span>
         </div>
     </div>
+    <div id="model-selector">
+        <button onclick="onModelSelect('ufo.obj')" data-model="ufo.obj" data-author="Poly by Google" data-source="https://poly.pizza/m/6pwiq7hSrHr">ufo</button>
+        <button onclick="onModelSelect('space-shuttle.obj')" data-model="space-shuttle.obj" data-author="Poly by Google" data-source="https://poly.pizza/m/djxolbz_CYC">space shuttle</button>
+        <button onclick="onModelSelect('rocketship.obj')" data-model="rocketship.obj" data-author="Gabriel Valdivia" data-source="https://poly.pizza/m/a5ChWS6uW0y" class="active">rocketship</button>
+    </div>
+    <a id="model-attribution" href="https://poly.pizza/m/a5ChWS6uW0y" target="_blank">Model by <span></span></a>
 
-    <canvas id="scene"></canvas>
     <script src="model-loader.js"></script>
     <script src="index.js"></script>
 </body>
