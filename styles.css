@@ -5,7 +5,7 @@
 }
 
 body {
-  margin: 0;
+  margin: 16px 0;
   min-height: 100vh;
   display: flex;
   flex-direction: column;

@@ -9,15 +9,17 @@
 <body>
     <div id="site-info">
         <div class="info-title">// projection.js</div>
-        <p>A minimal 3D wireframe renderer built from scratch with zero dependencies. No WebGL, no Three.js. Just Canvas 2D and vanilla JavaScript using perspective projection.</p>
+        <p>A minimal 3D wireframe renderer built from first principles using vanilla JavaScript and HTML Canvas 2D.</p>
+        <br/>
+        <p>This project intentionally avoids WebGL, Three.js, and external dependencies as a learning exercise to expose the core mathematics behind 3D graphics—including coordinate systems, projection, transformations, and camera placement by implementing the entire rendering pipeline on a 2D canvas.</p>
         
         <div class="info-divider"></div>
         
         <ul class="info-details">
-            <li><strong>Model loading:</strong> Parse <code>.obj</code> files into vertex/edge arrays</li>
-            <li><strong>Projection:</strong> Simple <code>x/z, y/z</code> perspective division</li>
-            <li><strong>Rotation:</strong> Pure 2x2 matrix transform in the xz-plane</li>
-            <li><strong>Auto-fit camera:</strong> Solve for z-distance keeping coordinates within [-1,1] NDC, accounting for bounding sphere radius</li>
+            <li><strong>Model loading:</strong> <code>.obj</code> files are parsed into vertex/edge arrays</li>
+            <li><strong>Projection:</strong> <code>x/z, y/z</code> perspective division</li>
+            <li><strong>Rotation:</strong> 2x2 matrix transform in the xz-plane</li>
+            <li><strong>Auto-fit camera:</strong> The camera is positioned to keep all model coordinates within the [-1,1] normalized device coordinate (NDC) space, accounting for the bounding sphere radius</li>
         </ul>
     </div>
 
