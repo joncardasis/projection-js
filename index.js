@@ -1,8 +1,9 @@
 const BACKGROUND = "#111111"
 const FOREGROUND = "#4AF626"
 
-scene.width = 600
-scene.height = 600
+const maxDimension = Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight)
+scene.width = maxDimension
+scene.height = maxDimension
 const ctx = scene.getContext("2d")
 
 let model = {
@@ -128,6 +129,11 @@ async function onModelSelect(modelSrc) {
   const buttons = document.querySelectorAll('#model-selector button')
   buttons.forEach(btn => {
     btn.classList.toggle('active', btn.dataset.model === modelSrc)
+    if (btn.dataset.model === modelSrc) {
+      const attribution = document.getElementById('model-attribution')
+      attribution.href = btn.dataset.source
+      attribution.innerHTML = `Model by <span>${btn.dataset.author}</span>`
+    }
   })
   
   clearTimeout(timer)

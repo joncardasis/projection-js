@@ -7,11 +7,26 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="model-selector">
-        <button onclick="onModelSelect('ufo.obj')" data-model="ufo.obj">ufo</button>
-        <button onclick="onModelSelect('space-shuttle.obj')" data-model="space-shuttle.obj">space shuttle</button>
-        <button onclick="onModelSelect('rocketship.obj')" data-model="rocketship.obj" class="active">rocketship</button>
+    <div id="site-info">
+        <div class="info-title">// projection.js</div>
+        <p>A minimal 3D wireframe renderer built from scratch with zero dependencies. No WebGL, no Three.js. Just Canvas 2D and vanilla JavaScript using perspective projection.</p>
+        
+        <div class="info-divider"></div>
+        
+        <ul class="info-details">
+            <li><strong>Model loading:</strong> Parse <code>.obj</code> files into vertex/edge arrays</li>
+            <li><strong>Projection:</strong> Simple <code>x/z, y/z</code> perspective division</li>
+            <li><strong>Rotation:</strong> Pure 2x2 matrix transform in the xz-plane</li>
+            <li><strong>Auto-fit camera:</strong> Solve for z-distance keeping coordinates within [-1,1] NDC, accounting for bounding sphere radius</li>
+        </ul>
     </div>
+
+    <div id="model-selector">
+        <button onclick="onModelSelect('ufo.obj')" data-model="ufo.obj" data-author="Poly by Google" data-source="https://poly.pizza/m/6pwiq7hSrHr">ufo</button>
+        <button onclick="onModelSelect('space-shuttle.obj')" data-model="space-shuttle.obj" data-author="Poly by Google" data-source="https://poly.pizza/m/djxolbz_CYC">space shuttle</button>
+        <button onclick="onModelSelect('rocketship.obj')" data-model="rocketship.obj" data-author="Gabriel Valdivia" data-source="https://poly.pizza/m/a5ChWS6uW0y" class="active">rocketship</button>
+    </div>
+    <a id="model-attribution" href="https://poly.pizza/m/a5ChWS6uW0y" target="_blank">Model by <span></span></a>
     <div id="controls-bar">
         <label class="checkbox-control">
             <input type="checkbox" id="show-bounding-box" checked onchange="showBoundingBox = this.checked">
